@@ -1,0 +1,9 @@
+anthropic
+openai>=1.0.0
+requests
+httpx
+urllib3
+certifi
+google-genai
+pillow
+browser-use[core]
