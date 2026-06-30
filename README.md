@@ -1,80 +1,87 @@
-# NaviGo Blog Automation Agent 🤖📰
+# 🤖 Autonomous WordPress AI Blogger (AI Blog Automation Agent)
 
-This repository contains the autonomous AI agent that automatically researches, generates, styles, and publishes high-converting, SEO-optimized blog posts for Indian small businesses and marketers.
+[![GitHub stars](https://img.shields.io/github/stars/navigotechsolutions-labs/wordpress-blog-automation.svg?style=flat-ring)](https://github.com/navigotechsolutions-labs/wordpress-blog-automation/stargazers)
+[![GitHub license](https://img.shields.io/github/license/navigotechsolutions-labs/wordpress-blog-automation.svg?style=flat-ring)](LICENSE)
+[![Python Version](https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C%203.10-blue.svg)](https://www.python.org/)
+[![AI Writer](https://img.shields.io/badge/Writer-Claude%20Sonnet--3.5-orange.svg)](https://anthropic.com)
 
-## Features
-* **Automated Topic Discovery**: Gathers trending headlines from Google News RSS feeds, reframes them specifically for Indian small business owners, and selects the best daily topic.
-* **Topic Queue Fallback**: Falls back to a local queue in `keywords.txt` if headlines aren't available.
-* **Breaking News Detector**: Checks every 4 hours for major AI company announcements (OpenAI, Anthropic, Google, Microsoft) and publishes hot breaking articles instantly.
-* **Premium Design Engine**: Generates and injects highly styled HTML, custom CSS variables, and responsive layouts into WordPress.
-* **AI Graphic Generation**: Creates custom featured graphics using Google Gemini Nano Banana, fallbacks to Pexels stock photos if API limits are hit.
-* **Instant Indexing**: Automatically pings search engines (Bing/Yandex via IndexNow, Google Sitemap) for immediate indexing.
-* **Activity Logging**: Logs all published posts and topics in `used_topics.txt` and a shared Google Sheet.
+An autonomous, self-hosted **AI Blog Automation Agent** that handles the complete content creation pipeline: trending topic discovery, deep web research, structured article drafting, custom graphic generation, premium design injection, and automatic publishing to WordPress with instant indexing.
+
+Perfect for marketers, site owners, and agencies looking to automate high-quality, SEO-optimized content creation at scale.
 
 ---
 
-## 🚀 VPS Hosting Setup (Sole Dependency)
-To make your blog automation run **solely** on your Hostinger VPS, follow these steps to migrate it away from GitHub Actions.
+## 🌟 Core Features
 
-### Step 1: Clone Repo & Setup on VPS
-SSH into your Hostinger VPS and run:
-```bash
-git clone https://github.com/navigotechsolutions-labs/ai-wordpress-agent.git
-cd ai-wordpress-agent
+* 📰 **Automated Topic Discovery**: Pulls breaking news and trending headlines from Google News RSS feeds and reframes them for small business and marketing audiences.
+* ✍️ **Claude 3.5 Sonnet Writing Engine**: Generates highly engaging, long-form (1,200+ words) articles styled with custom HTML, responsive grid layouts, and CSS variables.
+* 🎨 **AI Graphic Generation**: Creates custom blog header graphics using Gemini Nano, with a smart fallback to high-quality Pexels stock photos if API limits are reached.
+* 🔌 **Direct WordPress Publishing**: Injects customized Gutenberg/Elementor blocks, styles, tags, and categories directly using the WordPress REST API.
+* ⚡ **Instant Search Engine Indexing**: Automatically pings Bing, Yandex, and Google via **IndexNow** and XML sitemap submissions for rapid crawling.
+* 📅 **VPS-Ready Automation**: Lightweight, shell-scripted configuration optimized for running solely on virtual private servers (VPS) via `crontab`.
+
+---
+
+## 🔄 How the Automation Pipeline Works
+
+```mermaid
+graph TD
+    A[Scrape Google News RSS] --> B[Reframe Headline for Audience]
+    B --> C[Perform Deep Research via Claude]
+    C --> D[Generate Custom Featured Image]
+    D --> E[Inject Premium HTML/CSS into WordPress]
+    E --> F[Ping IndexNow & Submit Sitemap]
+    F --> G[Log Publication to Sheets & used_topics.txt]
 ```
 
-### Step 2: Run Setup Automation Script
-Run the helper setup script. This will create a virtual environment, install requirements, create log directories, and generate your `.env` file:
+---
+
+## 🛠️ VPS Hosting Setup
+
+Learn how to configure this agent to run autonomously on a virtual private server (e.g., Hostinger VPS).
+
+### Step 1: Clone & Setup
 ```bash
+git clone https://github.com/navigotechsolutions-labs/wordpress-blog-automation.git
+cd wordpress-blog-automation
 chmod +x setup_vps.sh run_vps_agent.sh
 ./setup_vps.sh
 ```
 
-### Step 3: Configure Environment Variables
-Open the `.env` file on the VPS and paste your API keys:
+### Step 2: Configure Environment Variables
+Open the generated `.env` file on your VPS and paste your API keys:
 ```bash
 nano .env
 ```
 Fill in the following fields:
 * `DEEPSEEK_API_KEY`
 * `ANTHROPIC_API_KEY`
-* `WP_SITE_URL` (e.g. `https://navigotechsolutions.com/blog`)
+* `WP_SITE_URL` (e.g., `https://yourdomain.com/blog`)
 * `WP_USERNAME`
 * `WP_APP_PASSWORD` (Your WordPress Application Password)
 * `GOOGLE_SHEET_URL`
 * `PEXELS_API_KEY`
 * `GEMINI_API_KEY`
 
-### Step 4: Automate the Runs (Crontab)
-The setup script automatically adds the following schedule to your VPS crontab:
-* **Daily Blog Post**: Runs at **6:30 AM** and **12:30 PM** daily.
-* **Breaking News Check**: Runs **every 4 hours** to catch major announcements.
-
-You can view or edit this schedule at any time by running:
+### Step 3: Run the Agent
+The setup script automatically adds schedules to your VPS crontab (e.g., publishing daily at **6:30 AM** and **12:30 PM**). To run manual updates:
 ```bash
-crontab -e
+# Run the agent immediately
+./run_vps_agent.sh
 ```
-
-### Step 5 (Optional): Set up Git Push to Sync History
-The script is configured to automatically pull changes from GitHub before running, and push updated files (`used_topics.txt`, `keywords.txt`) back to GitHub after publishing. 
-To enable this:
-1. Configure git on your VPS:
-   ```bash
-   git config --global user.name "Your Name"
-   git config --global user.email "your-email@example.com"
-   ```
-2. Set up an SSH key on the VPS and add it to your GitHub account so git commands can run passwordless:
-   ```bash
-   ssh-keygen -t ed25519 -C "your-email@example.com"
-   cat ~/.ssh/id_ed25519.pub
-   ```
-   (Copy this key and add it to GitHub Settings -> SSH Keys).
 
 ---
 
-## 🛠️ File Structure
-* [main.py](file:///d:/Blog%20automation/ai-wordpress-agent/main.py): The main entry point containing discovery, generation, and posting logic.
-* [keywords.txt](file:///d:/Blog%20automation/ai-wordpress-agent/keywords.txt): Queue of keywords used as a fallback.
-* [used_topics.txt](file:///d:/Blog%20automation/ai-wordpress-agent/used_topics.txt): Database of already published topics.
-* [setup_vps.sh](file:///d:/Blog%20automation/ai-wordpress-agent/setup_vps.sh): Automates Python venv and cron setup on the VPS.
-* [run_vps_agent.sh](file:///d:/Blog%20automation/ai-wordpress-agent/run_vps_agent.sh): Wrapper script that pulls remote changes, runs the agent, and pushes history back to GitHub.
+## 📄 File Directory
+
+* `main.py`: Main entry point comprising topic discovery, generation, and posting logic.
+* `keywords.txt`: Local keyword fallback queue if headlines are unavailable.
+* `used_topics.txt`: Database log of already published headlines.
+* `setup_vps.sh`: Script automating virtual environment and cron configuration on the server.
+* `run_vps_agent.sh`: Wrapper script that pulls changes, executes, and pushes history back to GitHub.
+
+---
+
+## 📄 License
+
+Distributed under the **MIT License**. See [LICENSE](LICENSE) for details.
